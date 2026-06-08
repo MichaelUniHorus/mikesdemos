@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Черный список ЦБ РФ - Статистика</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .header p {
+            opacity: 0.9;
+        }
+        .nav-links {
+            margin-bottom: 20px;
+        }
+        .nav-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: 600;
+        }
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .stat-card h3 {
+            font-size: 32px;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        .stat-card p {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .federal-districts {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .federal-districts h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .district {
+            margin-bottom: 30px;
+        }
+        .district h3 {
+            font-size: 18px;
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        .region-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .region-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .region-card h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .region-card .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .region-card .progress-fill {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .region-card .stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        .district-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-top: 4px solid #667eea;
+        }
+        .district-card h4 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .district-card .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 12px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        .district-card .progress-fill {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .district-card .stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #6c757d;
+        }
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .region-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-links">
+            <a href="/black-list-cbrf/">🗺️ Карта</a>
+            <a href="/black-list-cbrf/list">📋 Список</a>
+            <a href="/black-list-cbrf/about">ℹ️ О проекте</a>
+        </div>
+        
+        <div class="header">
+            <h1>📊 Статистика геокодирования</h1>
+            <p>Черный список ЦБ РФ — статистика геокодирования адресов по регионам и федеральным округам</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3 id="totalLocations">-</h3>
+                <p>Всего адресов</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="withCoords">-</h3>
+                <p>С координатами</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="percentage">-</h3>
+                <p>Процент геокодирования</p>
+            </div>
+        </div>
+        
+        <div class="federal-districts">
+            <h2>🗺️ По федеральным округам</h2>
+            <div class="stats-grid" id="districtsGrid">
+                <p>Загрузка...</p>
+            </div>
+        </div>
+        
+        <div class="federal-districts">
+            <h2>📍 Детально по регионам</h2>
+            <div id="districtsContainer">
+                <p>Загрузка...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = '/black-list-cbrf/api';
+        
+        // Federal districts mapping
+        const federalDistricts = {
+            'Центральный федеральный округ': [
+                'Белгородская область', 'Брянская область', 'Владимирская область',
+                'Воронежская область', 'Ивановская область', 'Калужская область',
+                'Костромская область', 'Курская область', 'Липецкая область',
+                'Московская область', 'Орловская область', 'Рязанская область',
+                'Смоленская область', 'Тамбовская область', 'Тверская область',
+                'Тульская область', 'Ярославская область', 'Москва'
+            ],
+            'Северо-Западный федеральный округ': [
+                'Республика Карелия', 'Республика Коми', 'Архангельская область',
+                'Вологодская область', 'Калининградская область', 'Ленинградская область',
+                'Мурманская область', 'Новгородская область', 'Псковская область',
+                'Ненецкий автономный округ', 'Санкт-Петербург'
+            ],
+            'Южный федеральный округ': [
+                'Республика Адыгея', 'Республика Калмыкия', 'Республика Крым',
+                'Краснодарский край', 'Астраханская область', 'Волгоградская область',
+                'Ростовская область', 'Севастополь'
+            ],
+            'Северо-Кавказский федеральный округ': [
+                'Республика Дагестан', 'Республика Ингушетия', 'Кабардино-Балкарская Республика',
+                'Карачаево-Черкесская Республика', 'Республика Северная Осетия — Алания',
+                'Чеченская Республика', 'Ставропольский край'
+            ],
+            'Приволжский федеральный округ': [
+                'Республика Башкортостан', 'Республика Марий Эл', 'Республика Мордовия',
+                'Республика Татарстан', 'Удмуртская Республика', 'Чувашская Республика',
+                'Пермский край', 'Кировская область', 'Нижегородская область',
+                'Оренбургская область', 'Пензенская область', 'Самарская область',
+                'Саратовская область', 'Ульяновская область'
+            ],
+            'Уральский федеральный округ': [
+                'Курганская область', 'Свердловская область', 'Тюменская область',
+                'Челябинская область', 'Ханты-Мансийский автономный округ — Югра',
+                'Ямало-Ненецкий автономный округ'
+            ],
+            'Сибирский федеральный округ': [
+                'Республика Алтай', 'Республика Бурятия', 'Республика Тыва',
+                'Республика Хакасия', 'Алтайский край', 'Забайкальский край',
+                'Красноярский край', 'Иркутская область', 'Кемеровская область',
+                'Новосибирская область', 'Омская область', 'Томская область'
+            ],
+            'Дальневосточный федеральный округ': [
+                'Республика Саха (Якутия)', 'Камчатский край', 'Приморский край',
+                'Хабаровский край', 'Амурская область', 'Магаданская область',
+                'Сахалинская область', 'Еврейская автономная область',
+                'Чукотский автономный округ'
+            ]
+        };
+        
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/organizations/geocoding_stats/`);
+                const data = await response.json();
+                
+                let totalLocations = 0;
+                let withCoords = 0;
+                
+                data.forEach(region => {
+                    totalLocations += region.total_locations || 0;
+                    withCoords += region.with_coords || 0;
+                });
+                
+                document.getElementById('totalLocations').textContent = totalLocations;
+                document.getElementById('withCoords').textContent = withCoords;
+                document.getElementById('percentage').textContent = totalLocations > 0 
+                    ? Math.round((withCoords / totalLocations) * 100) + '%' 
+                    : '0%';
+                
+                renderDistricts(data);
+                renderDistrictSummary(data);
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+        
+        function renderDistrictSummary(data) {
+            const container = document.getElementById('districtsGrid');
+            container.innerHTML = '';
+            
+            const regionMap = {};
+            data.forEach(region => {
+                regionMap[region.organization__region__name_ru] = region;
+            });
+            
+            for (const [district, regions] of Object.entries(federalDistricts)) {
+                let districtTotal = 0;
+                let districtWithCoords = 0;
+                
+                regions.forEach(regionName => {
+                    const regionData = regionMap[regionName];
+                    if (regionData) {
+                        districtTotal += regionData.total_locations || 0;
+                        districtWithCoords += regionData.with_coords || 0;
+                    }
+                });
+                
+                if (districtTotal > 0) {
+                    const percentage = Math.round((districtWithCoords / districtTotal) * 100);
+                    const card = document.createElement('div');
+                    card.className = 'district-card';
+                    card.innerHTML = `
+                        <h4>${district}</h4>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        <div class="stats">
+                            <span>Всего: ${districtTotal}</span>
+                            <span>С координатами: ${districtWithCoords}</span>
+                            <span>${percentage}%</span>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                }
+            }
+        }
+        
+        function renderDistricts(data) {
+            const container = document.getElementById('districtsContainer');
+            container.innerHTML = '';
+            
+            const regionMap = {};
+            data.forEach(region => {
+                regionMap[region.organization__region__name_ru] = region;
+            });
+            
+            for (const [district, regions] of Object.entries(federalDistricts)) {
+                const districtDiv = document.createElement('div');
+                districtDiv.className = 'district';
+                
+                let districtTotal = 0;
+                let districtWithCoords = 0;
+                let regionsHtml = '';
+                
+                regions.forEach(regionName => {
+                    const regionData = regionMap[regionName];
+                    if (regionData) {
+                        districtTotal += regionData.total_locations || 0;
+                        districtWithCoords += regionData.with_coords || 0;
+                        
+                        const percentage = regionData.total_locations > 0 
+                            ? Math.round((regionData.with_coords / regionData.total_locations) * 100) 
+                            : 0;
+                        
+                        regionsHtml += `
+                            <div class="region-card">
+                                <h4>${regionName}</h4>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${percentage}%"></div>
+                                </div>
+                                <div class="stats">
+                                    <span>Всего: ${regionData.total_locations}</span>
+                                    <span>С координатами: ${regionData.with_coords}</span>
+                                    <span>${percentage}%</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                
+                if (districtTotal > 0) {
+                    const districtPercentage = Math.round((districtWithCoords / districtTotal) * 100);
+                    districtDiv.innerHTML = `
+                        <h3>${district} (${districtPercentage}% геокодировано)</h3>
+                        <div class="region-stats">
+                            ${regionsHtml}
+                        </div>
+                    `;
+                    container.appendChild(districtDiv);
+                }
+            }
+        }
+        
+        // Initialize
+        loadStats();
+    </script>
+</body>
+</html>

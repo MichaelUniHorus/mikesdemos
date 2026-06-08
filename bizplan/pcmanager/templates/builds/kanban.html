@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Сборки ПК</h2>
+    <a href="{% url 'build_add' %}" class="btn btn-primary">Новая сборка</a>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header bg-warning">
+                <h5>Собирается ({{ assembling|length }})</h5>
+            </div>
+            <div class="card-body">
+                {% for build in assembling %}
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <h6>{{ build.title }}</h6>
+                        <p class="mb-1">Себестоимость: {{ build.cost_price }} ₽</p>
+                        <a href="{% url 'build_detail' build.pk %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
+                        <a href="{% url 'build_change_status' build.pk 'for_sale' %}" class="btn btn-sm btn-success">На продажу</a>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">Нет сборок</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header bg-info">
+                <h5>На продаже ({{ for_sale|length }})</h5>
+            </div>
+            <div class="card-body">
+                {% for build in for_sale %}
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <h6>{{ build.title }}</h6>
+                        <p class="mb-1">Цена: {{ build.sale_price }} ₽</p>
+                        <a href="{% url 'build_detail' build.pk %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
+                        <a href="{% url 'build_change_status' build.pk 'sold' %}" class="btn btn-sm btn-success">Продано</a>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">Нет сборок</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header bg-success">
+                <h5>Продано ({{ sold|length }})</h5>
+            </div>
+            <div class="card-body">
+                {% for build in sold %}
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <h6>{{ build.title }}</h6>
+                        <p class="mb-1">Цена: {{ build.sale_price }} ₽</p>
+                        <p class="mb-1">Прибыль: {{ build.profit }} ₽</p>
+                        <a href="{% url 'build_detail' build.pk %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">Нет продаж</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

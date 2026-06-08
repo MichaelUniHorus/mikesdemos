@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>{{ build.title }}</h2>
+    <div>
+        <a href="{% url 'build_edit' build.pk %}" class="btn btn-outline-primary">Редактировать</a>
+        <a href="{% url 'kanban' %}" class="btn btn-secondary">Назад</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5>Комплектующие</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tr>
+                        <td><strong>Процессор:</strong></td>
+                        <td>{{ build.cpu.name|default:"—" }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Видеокарта:</strong></td>
+                        <td>{{ build.gpu.name|default:"—" }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ОЗУ:</strong></td>
+                        <td>{{ build.ram.name|default:"—" }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SSD:</strong></td>
+                        <td>{{ build.ssd.name|default:"—" }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Охлаждение:</strong></td>
+                        <td>{{ build.cooler.name|default:"—" }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Корпус:</strong></td>
+                        <td>{{ build.case.name|default:"—" }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Блок питания:</strong></td>
+                        <td>{{ build.psu.name|default:"—" }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Материнская плата:</strong></td>
+                        <td>{{ build.motherboard.name|default:"—" }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5>Информация</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Статус:</strong> {{ build.get_status_display }}</p>
+                <p><strong>Себестоимость:</strong> {{ build.cost_price }} ₽</p>
+                <p><strong>Цена продажи:</strong> {{ build.sale_price|default:"—" }} ₽</p>
+                <p><strong>Прибыль:</strong> {{ build.profit|default:"—" }} ₽</p>
+                <p><strong>Дата создания:</strong> {{ build.created_at|date:"d.m.Y H:i" }}</p>
+                {% if build.sold_at %}
+                <p><strong>Дата продажи:</strong> {{ build.sold_at|date:"d.m.Y H:i" }}</p>
+                {% endif %}
+                <p><strong>Создал:</strong> {{ build.created_by.username }}</p>
+            </div>
+        </div>
+
+        {% if build.notes %}
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5>Заметки</h5>
+            </div>
+            <div class="card-body">
+                {{ build.notes|linebreaks }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

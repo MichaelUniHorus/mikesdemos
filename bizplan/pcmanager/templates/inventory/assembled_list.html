@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Готовые ПК на складе</h2>
+    <div>
+        <a href="{% url 'component_list' %}" class="btn btn-outline-primary me-2">Комплектующие</a>
+        <a href="{% url 'assembled_pc_add' %}" class="btn btn-primary">Добавить ПК</a>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Количество</th>
+            <th>Себестоимость</th>
+            <th>Цена продажи</th>
+            <th>Прибыль</th>
+            <th>Дата добавления</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pc in pcs %}
+        <tr>
+            <td>{{ pc.title }}</td>
+            <td>{{ pc.quantity }}</td>
+            <td>{{ pc.cost_price }} ₽</td>
+            <td>{{ pc.sale_price|default:"—" }} ₽</td>
+            <td>{{ pc.profit|default:"—" }} ₽</td>
+            <td>{{ pc.added_at|date:"d.m.Y" }}</td>
+            <td>
+                <a href="{% url 'assembled_pc_detail' pc.pk %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
+                <a href="{% url 'assembled_pc_disassemble' pc.pk %}" class="btn btn-sm btn-outline-warning">Разобрать</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7" class="text-center">Нет готовых ПК</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

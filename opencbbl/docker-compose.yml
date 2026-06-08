@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    network_mode: "host"
+    env_file:
+      - .env
+    volumes:
+      - ./staticfiles:/app/staticfiles
+      - ./media:/app/media
+    restart: unless-stopped

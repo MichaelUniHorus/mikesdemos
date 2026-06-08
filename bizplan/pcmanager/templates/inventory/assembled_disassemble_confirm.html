@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Разобрать ПК</h2>
+
+<div class="alert alert-warning">
+    <p>Вы уверены, что хотите разобрать <strong>{{ pc.title }}</strong>?</p>
+    <p class="mb-0">Все комплектующие будут возвращены на склад.</p>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-warning">Разобрать</button>
+    <a href="{% url 'assembled_pc_detail' pc.pk %}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}

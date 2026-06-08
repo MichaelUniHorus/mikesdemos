@@ -1,0 +1,15 @@
+[Unit]
+Description=gunicorn daemon for pcmanager
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/pcmanager
+ExecStart=/var/www/pcmanager/venv/bin/gunicorn \
+    --workers 3 \
+    --bind unix:/var/www/pcmanager/pcmanager.sock \
+    config.wsgi:application
+
+[Install]
+WantedBy=multi-user.target

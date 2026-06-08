@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Черный список ЦБ РФ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .hero p {
+            font-size: 24px;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .hero-buttons {
+            margin-top: 40px;
+        }
+        .hero-buttons a {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 15px 35px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .hero-buttons a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        .section {
+            margin-bottom: 80px;
+        }
+        .section h2 {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .section p {
+            font-size: 18px;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            text-align: center;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        .feature-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .feature-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .feature-card p {
+            color: #666;
+            font-size: 16px;
+        }
+        .goals {
+            background: white;
+            padding: 60px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .goals ul {
+            list-style: none;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .goals li {
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 18px;
+            color: #555;
+            display: flex;
+            align-items: center;
+        }
+        .goals li:last-child {
+            border-bottom: none;
+        }
+        .goals li:before {
+            content: "✓";
+            color: #667eea;
+            font-weight: bold;
+            font-size: 24px;
+            margin-right: 20px;
+        }
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .tech-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .footer {
+            background: #333;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .footer p {
+            opacity: 0.8;
+            font-size: 16px;
+        }
+        .nav-bar {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-bar a {
+            margin: 0 20px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-bar a:hover {
+            color: #667eea;
+        }
+        .nav-bar .logo {
+            font-weight: 700;
+            font-size: 24px;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="/black-list-cbrf/" class="logo">🏦 Черный список ЦБ РФ</a>
+        <a href="/black-list-cbrf/">🗺️ Карта</a>
+        <a href="/black-list-cbrf/list">📋 Список</a>
+        <a href="/black-list-cbrf/stats">📊 Статистика</a>
+    </div>
+    
+    <div class="hero">
+        <h1>🏦 Черный список ЦБ РФ</h1>
+        <p>Открытый общественный проект на основе официальных данных Банка России</p>
+        <div class="hero-buttons">
+            <a href="/black-list-cbrf/">🗺️ Открыть карту</a>
+            <a href="/black-list-cbrf/list">📋 Список организаций</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="section">
+            <h2>📋 О проекте</h2>
+            <p>Черный список ЦБ РФ — это общественный инициативный проект, созданный для повышения финансовой грамотности и защиты граждан от недобросовестных финансовых организаций.</p>
+            <p>Мы используем исключительно открытые официальные данные Центрального Банка России для предоставления достоверной и актуальной информации о компаниях с выявленными признаками нелегальной деятельности.</p>
+        </div>
+        
+        <div class="section">
+            <h2>🎯 Цели проекта</h2>
+            <div class="goals">
+                <ul>
+                    <li>Обеспечить свободный доступ к официальной информации о нелегальных финансовых операциях</li>
+                    <li>Помогать гражданам избегать взаимодействия с мошенническими организациями</li>
+                    <li>Создавать наглядную визуализацию географического распределения проблемных компаний</li>
+                    <li>Повышать финансовую грамотность населения</li>
+                    <li>Пропагандировать прозрачность и честность в финансовой сфере</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>✨ Возможности</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">🗺️</div>
+                    <h3>Интерактивная карта</h3>
+                    <p>Визуализация всех организаций на карте с возможностью фильтрации по регионам и признакам нелегальной деятельности</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Умный поиск</h3>
+                    <p>Поиск организаций по названию, ИНН, адресу с мгновенными результатами</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Статистика</h3>
+                    <p>Подробная статистика по регионам и видам нелегальной деятельности</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Актуальность</h3>
+                    <p>Данные обновляются автоматически из официального источника ЦБ РФ</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>📊 Источники данных</h2>
+            <p>Все данные загружаются из официального API Банка России (ЦБ РФ):</p>
+            <ul style="list-style: none; max-width: 600px; margin: 30px auto 0; text-align: center;">
+                <li style="padding: 15px 0; border-bottom: 1px solid #eee;">API списка компаний с признаками нелегальной деятельности</li>
+                <li style="padding: 15px 0; border-bottom: 1px solid #eee;">Библиотека регионов РФ</li>
+                <li style="padding: 15px 0; border-bottom: 1px solid #eee;">Библиотека признаков нелегальной деятельности</li>
+                <li style="padding: 15px 0;">Детальная информация о каждой организации</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>🛠️ Технологии</h2>
+            <div class="tech-stack">
+                <span class="tech-item">Django</span>
+                <span class="tech-item">Django REST Framework</span>
+                <span class="tech-item">Leaflet.js</span>
+                <span class="tech-item">PostgreSQL</span>
+                <span class="tech-item">Python</span>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>⚖️ Принципы</h2>
+            <div class="goals">
+                <ul>
+                    <li><a href="https://github.com/MichaelUniHorus/open-black-list" target="_blank" style="color: #667eea;">Открытость — весь код проекта открыт и доступен на GitHub</a></li>
+                    <li><a href="https://cbr.ru/inside/warning-list/" target="_blank" style="color: #667eea;">Прозрачность — используем только официальные источники данных ЦБ РФ</a></li>
+                    <li>Бесплатность — проект полностью бесплатен для пользователей</li>
+                    <li>Точность — данные берутся непосредственно из официального источника</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>© 2026 Черный список ЦБ РФ — Общественный проект на основе открытых данных ЦБ РФ</p>
+        <p style="margin-top: 10px; font-size: 14px;">Данные предоставлены исключительно в информационных целях</p>
+    </div>
+</body>
+</html>

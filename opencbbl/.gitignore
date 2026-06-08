@@ -1,0 +1,48 @@
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.env
+.venv
+# SQLite databases
+db.sqlite3
+db.sqlite3-journal
+opencbbl_db.sqlite3
+opencbbl_db.sqlite3-journal
+pcmanager_db.sqlite3
+pcmanager_db.sqlite3-journal
+# Media and static files
+/media
+/staticfiles
+# OS files
+.DS_Store
+Thumbs.db
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+# Logs
+*.log
+logs/

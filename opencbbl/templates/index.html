@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Черный список ЦБ РФ</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+        #header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: white;
+            border-bottom: 1px solid #ddd;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        #header a {
+            color: #333;
+            text-decoration: none;
+            margin-right: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        #header a:hover {
+            color: #007bff;
+        }
+        #sidebar-toggle {
+            position: absolute;
+            top: 60px;
+            left: 10px;
+            z-index: 1002;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #sidebar {
+            position: absolute;
+            top: 60px;
+            left: 10px;
+            width: 300px;
+            max-height: calc(100vh - 70px);
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            padding: 15px;
+            overflow-y: auto;
+            transform: translateX(-320px);
+            transition: transform 0.3s ease-in-out;
+        }
+        #sidebar.open {
+            transform: translateX(0);
+        }
+        .filter-group {
+            margin-bottom: 15px;
+        }
+        .filter-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .filter-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .stats {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+        .stats div {
+            margin: 5px 0;
+        }
+        h1 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+        /* Move zoom controls to bottom right */
+        .leaflet-control-zoom {
+            position: absolute !important;
+            bottom: 20px !important;
+            right: 10px !important;
+            top: auto !important;
+            left: auto !important;
+        }
+        .leaflet-control-attribution {
+            display: none !important;
+        }
+        .popup-content {
+            font-size: 13px;
+        }
+        .popup-content h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+        }
+        .popup-content p {
+            margin: 5px 0;
+        }
+        @media (max-width: 768px) {
+            #sidebar {
+                width: 280px;
+                left: 0;
+                top: 60px;
+                max-height: calc(100vh - 60px);
+                border-radius: 0 8px 8px 0;
+            }
+            #sidebar-toggle {
+                top: 60px;
+                left: 10px;
+            }
+            #header {
+                font-size: 12px;
+            }
+            #header a {
+                margin-right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <a href="/black-list-cbrf/about">ℹ️ О проекте</a>
+        <a href="/black-list-cbrf/list">📋 Полный список</a>
+        <a href="/black-list-cbrf/stats">📊 Статистика</a>
+    </div>
+    
+    <button id="sidebar-toggle">☰</button>
+    
+    <div id="sidebar">
+        <div class="stats" id="stats">
+            <div>Загрузка статистики...</div>
+        </div>
+        
+        <div class="filter-group">
+            <label for="regionFilter">Регион:</label>
+            <select id="regionFilter">
+                <option value="">Алтайский край</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label for="themaFilter">Признак нелегальной деятельности:</label>
+            <select id="themaFilter">
+                <option value="">Все признаки</option>
+            </select>
+        </div>
+        
+        <div class="filter-group" style="margin-top: 15px;">
+            <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" id="showClosedFilter" style="margin-right: 10px;">
+                Показывать закрытые организации
+            </label>
+        </div>
+        
+        <button class="btn" id="applyFilter">Применить фильтры</button>
+        <button class="btn" id="resetFilter" style="background: #6c757d; margin-top: 5px;">Сбросить</button>
+    </div>
+    
+    <div id="map"></div>
+    
+    <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.9); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div class="spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite;"></div>
+        <p style="margin-top: 20px; font-size: 18px; color: #333; font-weight: 600;">Загрузка точек на карту...</p>
+    </div>
+    
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
+    <script>
+        const API_BASE = '/black-list-cbrf/api';
+        let map;
+        let markers = [];
+        let markerCluster;
+        
+        function initMap() {
+            // Center on Altai Krai (Barnaul coordinates)
+            map = L.map('map').setView([53.35, 83.77], 7);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Initialize marker cluster
+            markerCluster = L.markerClusterGroup({
+                showCoverageOnHover: false,
+                zoomToBoundsOnClick: true,
+                spiderfyOnMaxZoom: true,
+                maxClusterRadius: 50
+            });
+            map.addLayer(markerCluster);
+        }
+        
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/organizations/stats/`);
+                const data = await response.json();
+                
+                document.getElementById('stats').innerHTML = `
+                    <div><strong>Всего организаций:</strong> ${data.total}</div>
+                    <div><strong>Всего адресов:</strong> ${data.locations}</div>
+                    <div><strong>С координатами:</strong> ${data.with_coordinates}</div>
+                `;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+        
+        async function loadFilters() {
+            try {
+                // Load all locations with coordinates
+                const locationsResponse = await fetch(`${API_BASE}/locations/map_points/`);
+                const locations = await locationsResponse.json();
+                
+                console.log('Loaded locations for filters:', locations.length);
+                console.log('Sample location:', locations[0]);
+                console.log('Sample location keys:', Object.keys(locations[0] || {}));
+                
+                // Get unique regions from locations with coordinates
+                const regionSet = new Map();
+                locations.forEach(loc => {
+                    // Extract region from address text - capture words before and after region type
+                    const address = loc.address || '';
+                    const regionMatch = address.match(/([^,]*?(?:республика|область|край|АО)[^,]*)/i);
+                    if (regionMatch) {
+                        let regionName = regionMatch[1].trim();
+                        // Normalize region name: remove all dash variants and extra spaces
+                        regionName = regionName.replace(/[-–—]/g, ' ').replace(/\s+/g, ' ').trim();
+                        // Use a simple hash as ID since we don't have real IDs
+                        const regionId = regionName.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+                        regionSet.set(regionId, regionName);
+                    }
+                });
+                
+                const regionSelect = document.getElementById('regionFilter');
+                regionSelect.innerHTML = '<option value="">Все регионы</option>';
+                
+                // Sort regions by name
+                const sortedRegions = Array.from(regionSet.entries()).sort((a, b) => a[1].localeCompare(b[1]));
+                sortedRegions.forEach(([id, name]) => {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.textContent = name;
+                    regionSelect.appendChild(option);
+                });
+                
+                console.log('Added regions to filter:', sortedRegions.length);
+                
+                // Get unique themas from all locations - try both organization_sign and thema_name
+                const themaSet = new Set();
+                locations.forEach(loc => {
+                    const themaValue = loc.organization_sign || loc.thema_name;
+                    if (themaValue) {
+                        themaSet.add(themaValue);
+                    }
+                });
+                
+                const themaSelect = document.getElementById('themaFilter');
+                themaSelect.innerHTML = '<option value="">Все признаки</option>';
+                themaSet.forEach(thema => {
+                    const option = document.createElement('option');
+                    option.value = thema;
+                    option.textContent = thema;
+                    themaSelect.appendChild(option);
+                });
+                
+                console.log('Added themas to filter:', themaSet.size);
+            } catch (error) {
+                console.error('Error loading filters:', error);
+            }
+        }
+        
+        async function loadMapPoints(filters = {}) {
+            // Show loading overlay
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            
+            // Clear existing markers
+            if (markerCluster) {
+                markerCluster.clearLayers();
+            }
+            markers = [];
+            
+            const params = new URLSearchParams();
+            if (filters.region) {
+                // Filter by address containing the region name using search parameter
+                const regions = Array.from(document.getElementById('regionFilter').options);
+                const selectedOption = regions.find(r => r.value === filters.region);
+                if (selectedOption) {
+                    // Normalize the region name for search (remove dashes)
+                    const searchTerms = selectedOption.textContent.replace(/[-–—]/g, ' ').trim();
+                    params.append('search', searchTerms);
+                }
+            }
+            if (filters.thema) params.append('organization__sign', filters.thema);
+            if (filters.showClosed !== true) params.append('is_closed', 'false');
+            
+            console.log('Loading map points with params:', params.toString());
+            
+            try {
+                const response = await fetch(`${API_BASE}/locations/map_points/?${params}`);
+                const data = await response.json();
+                
+                console.log('Loaded', data.length, 'locations');
+                
+                data.forEach(loc => {
+                    if (loc.latitude && loc.longitude) {
+                        const marker = L.marker([loc.latitude, loc.longitude]);
+                        const dateAdded = loc.cbr_date_added ? new Date(loc.cbr_date_added).toLocaleDateString('ru-RU') : 'Не указана';
+                        const dateUpdated = loc.updated_at ? new Date(loc.updated_at).toLocaleString('ru-RU') : 'Не указана';
+                        const closedStatus = loc.is_closed ? 'Да' : 'Нет';
+                        
+                        let websiteLink = '';
+                        if (loc.organization_website) {
+                            websiteLink = `<p><strong>Сайт:</strong> <a href="#" onclick="showWebsiteWarning('${loc.organization_website}'); return false;" style="color: #667eea;">🌐 Перейти</a></p>`;
+                        }
+                        
+                        marker.bindPopup(`
+                            <div class="popup-content">
+                                <h3>${loc.organization_name || 'Название не указано'}</h3>
+                                <p><strong>ИНН:</strong> ${loc.organization_inn || 'Не указан'}</p>
+                                <p><strong>Адрес:</strong> ${loc.address || 'Не указан'}</p>
+                                <p><strong>Регион:</strong> ${loc.region_name || 'Не указан'}</p>
+                                <p><strong>Признак:</strong> ${loc.organization_sign || 'Не указан'}</p>
+                                ${websiteLink}
+                                <p><strong>Дата включения в реестр (ЦБ):</strong> ${dateAdded}</p>
+                                <p><strong>Дата обновления (БД):</strong> ${dateUpdated}</p>
+                                <p><strong>Закрыта:</strong> ${closedStatus}</p>
+                            </div>
+                        `);
+                        markerCluster.addLayer(marker);
+                        markers.push(marker);
+                    }
+                });
+                
+                console.log('Added', markers.length, 'markers to cluster');
+            } catch (error) {
+                console.error('Error loading map points:', error);
+            } finally {
+                // Hide loading overlay
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        }
+        
+        function showWebsiteWarning(website) {
+            if (confirm('⚠️ ВНИМАНИЕ!\n\nПереход на сайт может быть небезопасным.\n\nВы будете перенаправлены на сайт Банка России с информацией о видах нелегальной деятельности на финансовом рынке.\n\nПродолжить?')) {
+                window.location.href = 'https://cbr.ru/inside/k_illegals/';
+            }
+        }
+        
+        document.getElementById('applyFilter').addEventListener('click', () => {
+            const region = document.getElementById('regionFilter').value;
+            const thema = document.getElementById('themaFilter').value;
+            const showClosed = document.getElementById('showClosedFilter').checked;
+            
+            loadMapPoints({
+                region: region || null,
+                thema: thema || null,
+                showClosed: showClosed
+            });
+        });
+        
+        document.getElementById('resetFilter').addEventListener('click', () => {
+            document.getElementById('regionFilter').value = '';
+            document.getElementById('themaFilter').value = '';
+            document.getElementById('showClosedFilter').checked = false;
+            loadMapPoints();
+        });
+        
+        // Sidebar toggle functionality
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+        
+        // Initialize
+        initMap();
+        loadStats();
+        loadFilters();
+        loadMapPoints();
+    </script>
+</body>
+</html>
