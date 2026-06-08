@@ -29,62 +29,166 @@
     
     <div class="card mb-3">
         <div class="card-header">
-            <h5 class="mb-0">Или выбрать отдельные компоненты</h5>
+            <h5 class="mb-0">Или выбрать / добавить компоненты</h5>
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="{{ form.cpu.id_for_label }}" class="form-label">Процессор</label>
+                        <label for="{{ form.cpu.id_for_label }}" class="form-label">Процессор (со склада)</label>
                         {{ form.cpu }}
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="{{ form.gpu.id_for_label }}" class="form-label">Видеокарта</label>
+                        <label for="{{ form.new_cpu_name.id_for_label }}" class="form-label">или новый CPU</label>
+                        {{ form.new_cpu_name }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="{{ form.new_cpu_price.id_for_label }}" class="form-label">Цена CPU</label>
+                        {{ form.new_cpu_price }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="{{ form.gpu.id_for_label }}" class="form-label">Видеокарта (со склада)</label>
                         {{ form.gpu }}
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="{{ form.new_gpu_name.id_for_label }}" class="form-label">или новая GPU</label>
+                        {{ form.new_gpu_name }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="{{ form.new_gpu_price.id_for_label }}" class="form-label">Цена GPU</label>
+                        {{ form.new_gpu_price }}
+                    </div>
+                </div>
             </div>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="{{ form.ram.id_for_label }}" class="form-label">ОЗУ</label>
+                        <label for="{{ form.ram.id_for_label }}" class="form-label">ОЗУ (со склада)</label>
                         {{ form.ram }}
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="{{ form.ssd.id_for_label }}" class="form-label">SSD</label>
+                        <label for="{{ form.new_ram_name.id_for_label }}" class="form-label">или новая ОЗУ</label>
+                        {{ form.new_ram_name }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="{{ form.new_ram_price.id_for_label }}" class="form-label">Цена ОЗУ</label>
+                        {{ form.new_ram_price }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="{{ form.ssd.id_for_label }}" class="form-label">SSD (со склада)</label>
                         {{ form.ssd }}
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="{{ form.new_ssd_name.id_for_label }}" class="form-label">или новый SSD</label>
+                        {{ form.new_ssd_name }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="{{ form.new_ssd_price.id_for_label }}" class="form-label">Цена SSD</label>
+                        {{ form.new_ssd_price }}
+                    </div>
+                </div>
             </div>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="{{ form.cooler.id_for_label }}" class="form-label">Охлаждение</label>
+                        <label for="{{ form.cooler.id_for_label }}" class="form-label">Охлаждение (со склада)</label>
                         {{ form.cooler }}
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="{{ form.case.id_for_label }}" class="form-label">Корпус</label>
-                        {{ form.case }}
+                        <label for="{{ form.new_cooler_name.id_for_label }}" class="form-label">или новый кулер</label>
+                        {{ form.new_cooler_name }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="{{ form.new_cooler_price.id_for_label }}" class="form-label">Цена кулера</label>
+                        {{ form.new_cooler_price }}
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="{{ form.psu.id_for_label }}" class="form-label">Блок питания</label>
+                        <label for="{{ form.case.id_for_label }}" class="form-label">Корпус (со склада)</label>
+                        {{ form.case }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="{{ form.new_case_name.id_for_label }}" class="form-label">или новый корпус</label>
+                        {{ form.new_case_name }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="{{ form.new_case_price.id_for_label }}" class="form-label">Цена корпуса</label>
+                        {{ form.new_case_price }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="{{ form.psu.id_for_label }}" class="form-label">Блок питания (со склада)</label>
                         {{ form.psu }}
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="{{ form.motherboard.id_for_label }}" class="form-label">Материнская плата</label>
+                        <label for="{{ form.new_psu_name.id_for_label }}" class="form-label">или новый БП</label>
+                        {{ form.new_psu_name }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="{{ form.new_psu_price.id_for_label }}" class="form-label">Цена БП</label>
+                        {{ form.new_psu_price }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="{{ form.motherboard.id_for_label }}" class="form-label">Материнская плата (со склада)</label>
                         {{ form.motherboard }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="{{ form.new_motherboard_name.id_for_label }}" class="form-label">или новая материнка</label>
+                        {{ form.new_motherboard_name }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="{{ form.new_motherboard_price.id_for_label }}" class="form-label">Цена материнки</label>
+                        {{ form.new_motherboard_price }}
                     </div>
                 </div>
             </div>

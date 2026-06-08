@@ -58,6 +58,10 @@ class AssembledPC(models.Model):
     title = models.CharField(max_length=200, verbose_name='Название')
     quantity = models.PositiveIntegerField(default=0, verbose_name='Количество')
     
+    # Фото и описание
+    image = models.ImageField(upload_to='assembled_pc/', blank=True, null=True, verbose_name='Фото')
+    description = models.TextField(blank=True, verbose_name='Описание')
+    
     # Комплектующие (FK на Component)
     cpu = models.ForeignKey(Component, on_delete=models.PROTECT, related_name='assembled_pcs_cpu', null=True, blank=True, verbose_name='Процессор')
     gpu = models.ForeignKey(Component, on_delete=models.PROTECT, related_name='assembled_pcs_gpu', null=True, blank=True, verbose_name='Видеокарта')

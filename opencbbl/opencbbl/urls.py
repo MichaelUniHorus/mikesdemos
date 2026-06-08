@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
 from django.views.generic import TemplateView, RedirectView
 from api.views import RegionViewSet, ThemaViewSet, OrganizationViewSet, LocationViewSet
@@ -26,3 +28,6 @@ urlpatterns = [
     path('pcmanager/builds/', include('apps.builds.urls')),
     path('pcmanager/', include('apps.accounts.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
