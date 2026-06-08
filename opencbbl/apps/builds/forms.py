@@ -1,6 +1,14 @@
 from django import forms
-from .models import PCBuild
+from .models import PCBuild, BuildTask
 from apps.inventory.models import Component, ComponentCategory, AssembledPC
+
+class BuildTaskForm(forms.ModelForm):
+    class Meta:
+        model = BuildTask
+        fields = ['task_type', 'description', 'status']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 2}),
+        }
 
 class PCBuildForm(forms.ModelForm):
     # Поля для создания новых компонентов прямо в форме сборки

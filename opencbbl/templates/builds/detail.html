@@ -84,4 +84,90 @@
         {% endif %}
     </div>
 </div>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h5>Задачи</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" class="mb-4">
+            {% csrf_token %}
+            <div class="row g-2">
+                <div class="col-md-4">
+                    {{ task_form.task_type }}
+                </div>
+                <div class="col-md-5">
+                    {{ task_form.description }}
+                </div>
+                <div class="col-md-2">
+                    {{ task_form.status }}
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary w-100">+</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card bg-light">
+                    <div class="card-header bg-warning">К выполнению</div>
+                    <div class="card-body">
+                        {% for task in todo_tasks %}
+                        <div class="card mb-2">
+                            <div class="card-body p-2">
+                                <strong>{{ task.get_task_type_display }}</strong>
+                                {% if task.description %}<br><small>{{ task.description }}</small>{% endif %}
+                                <div class="mt-2">
+                                    <a href="{% url 'task_change_status' task.pk 'in_progress' %}" class="btn btn-sm btn-primary">→</a>
+                                    <a href="{% url 'task_delete' task.pk %}" class="btn btn-sm btn-danger">×</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-light">
+                    <div class="card-header bg-info text-white">В работе</div>
+                    <div class="card-body">
+                        {% for task in in_progress_tasks %}
+                        <div class="card mb-2">
+                            <div class="card-body p-2">
+                                <strong>{{ task.get_task_type_display }}</strong>
+                                {% if task.description %}<br><small>{{ task.description }}</small>{% endif %}
+                                <div class="mt-2">
+                                    <a href="{% url 'task_change_status' task.pk 'done' %}" class="btn btn-sm btn-success">✓</a>
+                                    <a href="{% url 'task_change_status' task.pk 'todo' %}" class="btn btn-sm btn-secondary">←</a>
+                                    <a href="{% url 'task_delete' task.pk %}" class="btn btn-sm btn-danger">×</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-light">
+                    <div class="card-header bg-success text-white">Готово</div>
+                    <div class="card-body">
+                        {% for task in done_tasks %}
+                        <div class="card mb-2">
+                            <div class="card-body p-2">
+                                <strong>{{ task.get_task_type_display }}</strong>
+                                {% if task.description %}<br><small>{{ task.description }}</small>{% endif %}
+                                <div class="mt-2">
+                                    <a href="{% url 'task_change_status' task.pk 'todo' %}" class="btn btn-sm btn-secondary">←</a>
+                                    <a href="{% url 'task_delete' task.pk %}" class="btn btn-sm btn-danger">×</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

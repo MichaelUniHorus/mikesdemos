@@ -4,6 +4,40 @@ from apps.inventory.models import Component
 
 User = get_user_model()
 
+class BuildTask(models.Model):
+    """Задачи для сборки ПК"""
+    STATUS_CHOICES = [
+        ('todo', 'К выполнению'),
+        ('in_progress', 'В работе'),
+        ('done', 'Готово'),
+    ]
+    
+    TASK_TYPES = [
+        ('photo', 'Сфотографировать'),
+        ('avito', 'Выложить на Авито'),
+        ('clean', 'Почистить'),
+        ('test', 'Протестировать'),
+        ('install_os', 'Установить ОС'),
+        ('install_programs', 'Установить программы'),
+        ('other', 'Другое'),
+    ]
+    
+    build = models.ForeignKey('PCBuild', on_delete=models.CASCADE, related_name='tasks')
+    task_type = models.CharField(max_length=20, choices=TASK_TYPES, verbose_name='Тип задачи')
+    description = models.TextField(blank=True, verbose_name='Описание')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='todo', verbose_name='Статус')
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Задача'
+        verbose_name_plural = 'Задачи'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.get_task_type_display()} - {self.build.title} ({self.get_status_display()})"
+
 class PCBuild(models.Model):
     STATUS_CHOICES = [
         ('assembling', 'Собирается'),
