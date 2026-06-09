@@ -39,6 +39,8 @@ class Component(models.Model):
     @property
     def used_quantity(self):
         """Сколько единиц используется в сборках"""
+        if self.quantity <= 0:
+            return 0
         from apps.builds.models import PCBuild
         count = 0
         for field in ['cpu', 'gpu', 'ram', 'ssd', 'cooler', 'case', 'psu', 'motherboard']:
