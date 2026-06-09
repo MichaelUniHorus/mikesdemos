@@ -18,7 +18,7 @@ def log_action(user, action, model_name, obj, description=''):
 @login_required
 def component_list(request):
     category_slug = request.GET.get('category')
-    components = Component.objects.all()
+    components = Component.objects.filter(quantity__gt=0)
     
     if category_slug:
         category = get_object_or_404(ComponentCategory, slug=category_slug)
