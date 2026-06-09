@@ -2,9 +2,8 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.db import models
 from django.db.models import Sum
-from django.db.models.functions import TruncMonth, TruncQuarter, TruncYear
-from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
+from django.db.models.functions import TruncMonth
+from datetime import datetime
 from apps.inventory.models import Component, ComponentCategory
 from apps.builds.models import PCBuild
 
