@@ -37,6 +37,28 @@ class Component(models.Model):
         return self.purchase_price * self.quantity
 
     @property
+    def used_quantity(self):
+        """Сколько единиц используется в сборках"""
+        from apps.builds.models import PCBuild
+        count = 0
+        for field in ['cpu', 'gpu', 'ram', 'ssd', 'cooler', 'case', 'psu', 'motherboard']:
+            if self.category.slug == field or (field == 'cpu' and self.category.slug == 'cpu') or \
+               (field == 'gpu' and self.category.slug == 'gpu') or \
+               (field == 'ram' and self.category.slug == 'ram') or \
+               (field == 'ssd' and self.category.slug == 'ssd') or \
+               (field == 'cooler' and self.category.slug == 'cooler') or \
+               (field == 'case' and self.category.slug == 'case') or \
+               (field == 'psu' and self.category.slug == 'psu') or \
+               (field == 'motherboard' and self.category.slug == 'motherboard'):
+                count += PCBuild.objects.filter(**{field: self}).count()
+        return count
+
+    @property
+    def available_quantity(self):
+        """Доступное количество (всего - используется)"""
+        return max(0, self.quantity - self.used_quantity)
+
+    @property
     def used_in_builds(self):
         """В каких сборках используется компонент"""
         from apps.builds.models import PCBuild

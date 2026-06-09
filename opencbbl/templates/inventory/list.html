@@ -39,8 +39,9 @@
             <td>{{ component.quantity }}</td>
             <td>{{ component.total_value }} ₽</td>
             <td>
-                {% if component.used_in_builds %}
-                    <small class="text-muted">
+                {% if component.used_quantity > 0 %}
+                    <span class="text-danger">{{ component.used_quantity }} / {{ component.quantity }}</span>
+                    <small class="text-muted d-block">
                         {% for build in component.used_in_builds %}
                             <a href="{% url 'build_detail' build.pk %}">{{ build.title }}</a>{% if not forloop.last %}, {% endif %}
                         {% endfor %}
