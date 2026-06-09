@@ -1,8 +1,5 @@
 from django.core.management.base import BaseCommand
 from apps.inventory.models import ComponentCategory, Component
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
 
 class Command(BaseCommand):
     help = 'Seed database with initial data'
@@ -21,7 +18,13 @@ class Command(BaseCommand):
         ]
 
         for name, slug in categories_data:
-            ComponentCategory.objects.get_or_create(name=name, slug=slug)
+            cat, created = ComponentCategory.objects.get_or_create(slug=slug, defaults={'name': name})
+            if not created and cat.name != name:
+                cat.name = name
+                cat.save()
+                self.stdout.write(f'Updated category: {slug} -> {name}')
+            elif created:
+                self.stdout.write(f'Created category: {name}')
 
         self.stdout.write(self.style.SUCCESS('Categories created'))
 
@@ -66,12 +69,4 @@ class Command(BaseCommand):
             )
 
         self.stdout.write(self.style.SUCCESS('Components created'))
-
-        # Create admin user if not exists
-        if not User.objects.filter(username='admin').exists():
-            User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
-            self.stdout.write(self.style.SUCCESS('Admin user created (admin/admin123)'))
-        else:
-            self.stdout.write('Admin user already exists')
-
         self.stdout.write(self.style.SUCCESS('Seed completed'))
