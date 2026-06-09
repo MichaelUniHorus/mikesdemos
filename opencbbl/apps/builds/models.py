@@ -65,6 +65,9 @@ class PCBuild(models.Model):
     sold_at = models.DateTimeField(null=True, blank=True, verbose_name='Дата продажи')
     notes = models.TextField(blank=True, verbose_name='Заметки')
     
+    # История использованных компонентов (JSON)
+    component_history = models.JSONField(default=list, blank=True, verbose_name='История компонентов')
+    
     # Даты смены статусов
     assembling_started = models.DateTimeField(null=True, blank=True, verbose_name='Начало сборки')
     for_sale_started = models.DateTimeField(null=True, blank=True, verbose_name='Начало продажи')
@@ -144,8 +147,30 @@ class PCBuild(models.Model):
                     self.for_sale_started = timezone.now()
                 elif self.status == 'sold':
                     self.sold_at_timestamp = timezone.now()
+                    self._save_component_history()
                     self._deduct_components()
         super().save(*args, **kwargs)
+
+    def _save_component_history(self):
+        """Сохранить историю использованных компонентов"""
+        history = []
+        if self.assembled_pc:
+            history.append({
+                'type': 'assembled_pc',
+                'name': self.assembled_pc.title,
+                'cost_price': float(self.assembled_pc.cost_price),
+            })
+        else:
+            for field in ['cpu', 'gpu', 'ram', 'ssd', 'cooler', 'case', 'psu', 'motherboard']:
+                comp = getattr(self, field)
+                if comp:
+                    history.append({
+                        'type': field,
+                        'name': comp.name,
+                        'category': comp.category.name,
+                        'cost_price': float(comp.purchase_price),
+                    })
+        self.component_history = history
 
     def _deduct_components(self):
         """Списать по 1 единице каждого компонента"""
