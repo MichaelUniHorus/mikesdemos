@@ -65,6 +65,11 @@ class PCBuild(models.Model):
     sold_at = models.DateTimeField(null=True, blank=True, verbose_name='Дата продажи')
     notes = models.TextField(blank=True, verbose_name='Заметки')
     
+    # Даты смены статусов
+    assembling_started = models.DateTimeField(null=True, blank=True, verbose_name='Начало сборки')
+    for_sale_started = models.DateTimeField(null=True, blank=True, verbose_name='Начало продажи')
+    sold_at_timestamp = models.DateTimeField(null=True, blank=True, verbose_name='Дата продажи (время)')
+    
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='builds')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -96,12 +101,39 @@ class PCBuild(models.Model):
             return self.sale_price - self.cost_price
         return None
 
+    @property
+    def assembly_time_days(self):
+        """Время сборки в днях"""
+        if self.for_sale_started and self.assembling_started:
+            return (self.for_sale_started - self.assembling_started).days
+        return None
+
+    @property
+    def sale_time_days(self):
+        """Время продажи в днях"""
+        if self.sold_at_timestamp and self.for_sale_started:
+            return (self.sold_at_timestamp - self.for_sale_started).days
+        return None
+
+    @property
+    def total_time_days(self):
+        """Общее время от начала до продажи"""
+        if self.sold_at_timestamp and self.assembling_started:
+            return (self.sold_at_timestamp - self.assembling_started).days
+        return None
+
     def save(self, *args, **kwargs):
-        # При переводе в статус "продан" списываем комплектующие со склада
-        if self.status == 'sold' and self.pk:
-            old_status = PCBuild.objects.get(pk=self.pk).status
-            if old_status != 'sold':
-                self._deduct_components()
+        from django.utils import timezone
+        if self.pk:
+            old = PCBuild.objects.get(pk=self.pk)
+            if old.status != self.status:
+                if self.status == 'assembling' and not self.assembling_started:
+                    self.assembling_started = timezone.now()
+                elif self.status == 'for_sale' and not self.for_sale_started:
+                    self.for_sale_started = timezone.now()
+                elif self.status == 'sold':
+                    self.sold_at_timestamp = timezone.now()
+                    self._deduct_components()
         super().save(*args, **kwargs)
 
     def _deduct_components(self):

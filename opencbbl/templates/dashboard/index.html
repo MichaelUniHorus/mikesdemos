@@ -3,75 +3,124 @@
 {% block content %}
 <h2>Дашборд</h2>
 
-<div class="row mb-4">
-    <div class="col-md-3">
-        <div class="card text-white bg-primary">
-            <div class="card-body">
-                <h5 class="card-title">Всего сборок</h5>
-                <p class="card-text display-4">{{ builds_by_status }}</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-success">
-            <div class="card-body">
-                <h5 class="card-title">Продано</h5>
-                <p class="card-text display-4">{{ total_sold }}</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-info">
-            <div class="card-body">
-                <h5 class="card-title">Выручка</h5>
-                <p class="card-text display-4">{{ total_sales }} ₽</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-warning">
-            <div class="card-body">
-                <h5 class="card-title">Стоимость склада</h5>
-                <p class="card-text display-4">{{ total_inventory_value }} ₽</p>
-            </div>
-        </div>
-    </div>
-</div>
+<ul class="nav nav-tabs mb-4" id="dashboardTabs" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="economy-tab" data-bs-toggle="tab" href="#economy" role="tab">Экономика</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="warehouse-tab" data-bs-toggle="tab" href="#warehouse" role="tab">Склад</a>
+    </li>
+</ul>
 
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5>Остатки по категориям</h5>
+<div class="tab-content">
+    <!-- ЭКОНОМИКА -->
+    <div class="tab-pane fade show active" id="economy" role="tabpanel">
+        <form method="get" class="mb-4">
+            <div class="row g-3 align-items-end">
+                <div class="col-auto">
+                    <label class="form-label">Период</label>
+                    <select name="period" class="form-select" onchange="this.form.submit()">
+                        <option value="month" {% if period == 'month' %}selected{% endif %}>Текущий месяц</option>
+                        <option value="quarter" {% if period == 'quarter' %}selected{% endif %}>Текущий квартал</option>
+                        <option value="year" {% if period == 'year' %}selected{% endif %}>Текущий год</option>
+                        <option value="custom" {% if period == 'custom' %}selected{% endif %}>Произвольный</option>
+                    </select>
+                </div>
+                {% if period == 'custom' %}
+                <div class="col-auto">
+                    <label class="form-label">С</label>
+                    <input type="date" name="start_date" class="form-control" value="{{ start_date }}">
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">По</label>
+                    <input type="date" name="end_date" class="form-control" value="{{ end_date }}">
+                </div>
+                {% endif %}
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Применить</button>
+                </div>
             </div>
-            <div class="card-body">
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th>Категория</th>
-                            <th>Количество</th>
-                            <th>Стоимость</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for stat in category_stats %}
-                        <tr>
-                            <td>{{ stat.name }}</td>
-                            <td>{{ stat.quantity }}</td>
-                            <td>{{ stat.value }} ₽</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="3" class="text-center">Нет данных</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+        </form>
+
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body">
+                        <h5 class="card-title">Продано</h5>
+                        <p class="card-text display-4">{{ total_sold }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info">
+                    <div class="card-body">
+                        <h5 class="card-title">Выручка</h5>
+                        <p class="card-text display-4">{{ total_sales }} ₽</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-primary">
+                    <div class="card-body">
+                        <h5 class="card-title">Прибыль</h5>
+                        <p class="card-text display-4">{{ total_profit }} ₽</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning">
+                    <div class="card-body">
+                        <h5 class="card-title">Среднее время сборки</h5>
+                        <p class="card-text display-4">{{ avg_assembly_time }} дн.</p>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="col-md-6">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Время продажи (среднее)</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="display-3">{{ avg_sale_time }} дней</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Продажи по месяцам</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Месяц</th>
+                                    <th>Продано</th>
+                                    <th>Выручка</th>
+                                    <th>Прибыль</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for m in monthly_data %}
+                                <tr>
+                                    <td>{{ m.month|date:"m.Y" }}</td>
+                                    <td>{{ m.count }}</td>
+                                    <td>{{ m.revenue|default:0 }} ₽</td>
+                                    <td>{{ m.profit|default:0 }} ₽</td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="4" class="text-center">Нет данных</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="card">
             <div class="card-header">
                 <h5>Последние продажи</h5>
@@ -81,7 +130,11 @@
                     <thead>
                         <tr>
                             <th>Название</th>
+                            <th>Себестоимость</th>
                             <th>Цена</th>
+                            <th>Прибыль</th>
+                            <th>Время сборки</th>
+                            <th>Время продажи</th>
                             <th>Дата</th>
                         </tr>
                     </thead>
@@ -89,12 +142,62 @@
                         {% for sale in recent_sales %}
                         <tr>
                             <td>{{ sale.title }}</td>
+                            <td>{{ sale.cost_price }} ₽</td>
                             <td>{{ sale.sale_price }} ₽</td>
+                            <td>{{ sale.profit }} ₽</td>
+                            <td>{{ sale.assembly_time_days|default:"—" }} дн.</td>
+                            <td>{{ sale.sale_time_days|default:"—" }} дн.</td>
                             <td>{{ sale.sold_at|date:"d.m.Y" }}</td>
                         </tr>
                         {% empty %}
+                        <tr><td colspan="7" class="text-center">Нет продаж</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- СКЛАД -->
+    <div class="tab-pane fade" id="warehouse" role="tabpanel">
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-warning">
+                    <div class="card-body">
+                        <h5 class="card-title">Стоимость склада</h5>
+                        <p class="card-text display-4">{{ total_inventory_value }} ₽</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5>Остатки по категориям</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
                         <tr>
-                            <td colspan="3" class="text-center">Нет продаж</td>
+                            <th>Категория</th>
+                            <th>Всего</th>
+                            <th>Доступно</th>
+                            <th>Использовано</th>
+                            <th>Стоимость</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in category_stats %}
+                        <tr>
+                            <td>{{ stat.name }}</td>
+                            <td>{{ stat.quantity }}</td>
+                            <td>{{ stat.available }}</td>
+                            <td>{{ stat.used }}</td>
+                            <td>{{ stat.value }} ₽</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">Нет данных</td>
                         </tr>
                         {% endfor %}
                     </tbody>
