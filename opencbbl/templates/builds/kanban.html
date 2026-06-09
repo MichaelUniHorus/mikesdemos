@@ -18,6 +18,14 @@
                     <div class="card-body">
                         <h6>{{ build.title }}</h6>
                         <p class="mb-1">Себестоимость: {{ build.cost_price }} ₽</p>
+                        {% if build.task_stats.total > 0 %}
+                        <p class="mb-1">
+                            <span class="badge bg-secondary">{{ build.task_stats.total }} задач</span>
+                            <span class="badge bg-warning">{{ build.task_stats.todo }} ожидает</span>
+                            <span class="badge bg-info">{{ build.task_stats.in_progress }} в работе</span>
+                            <span class="badge bg-success">{{ build.task_stats.done }} готово</span>
+                        </p>
+                        {% endif %}
                         <a href="{% url 'build_detail' build.pk %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
                         <a href="{% url 'build_change_status' build.pk 'for_sale' %}" class="btn btn-sm btn-success">На продажу</a>
                     </div>
@@ -40,6 +48,14 @@
                     <div class="card-body">
                         <h6>{{ build.title }}</h6>
                         <p class="mb-1">Цена: {{ build.sale_price }} ₽</p>
+                        {% if build.task_stats.total > 0 %}
+                        <p class="mb-1">
+                            <span class="badge bg-secondary">{{ build.task_stats.total }} задач</span>
+                            <span class="badge bg-warning">{{ build.task_stats.todo }} ожидает</span>
+                            <span class="badge bg-info">{{ build.task_stats.in_progress }} в работе</span>
+                            <span class="badge bg-success">{{ build.task_stats.done }} готово</span>
+                        </p>
+                        {% endif %}
                         <a href="{% url 'build_detail' build.pk %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
                         <a href="{% url 'build_change_status' build.pk 'sold' %}" class="btn btn-sm btn-success">Продано</a>
                     </div>

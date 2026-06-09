@@ -122,6 +122,17 @@ class PCBuild(models.Model):
             return (self.sold_at_timestamp - self.assembling_started).days
         return None
 
+    @property
+    def task_stats(self):
+        """Статистика по задачам"""
+        tasks = self.tasks.all()
+        return {
+            'total': tasks.count(),
+            'todo': tasks.filter(status='todo').count(),
+            'in_progress': tasks.filter(status='in_progress').count(),
+            'done': tasks.filter(status='done').count(),
+        }
+
     def save(self, *args, **kwargs):
         from django.utils import timezone
         if self.pk:
