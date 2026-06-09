@@ -39,7 +39,6 @@ def dashboard_view(request):
     total_sold = builds_in_period.count()
     total_sales = builds_in_period.aggregate(total=models.Sum('sale_price'))['total'] or 0
     total_profit = sum(b.profit or 0 for b in builds_in_period)
-    total_cost = builds_in_period.aggregate(total=models.Sum(models.F('sale_price') - models.F('purchase_price')))['total'] or 0
 
     # Время сборки/продажи
     sold_builds = builds_in_period.filter(status='sold')
@@ -49,8 +48,7 @@ def dashboard_view(request):
     # Графики по месяцам
     monthly_data = builds_in_period.annotate(month=TruncMonth('sold_at_timestamp')).values('month').annotate(
         count=models.Count('id'),
-        revenue=models.Sum('sale_price'),
-        profit=Sum('sale_price') - models.Sum('purchase_price')
+        revenue=models.Sum('sale_price')
     ).order_by('month')
 
     # Статистика по складу
