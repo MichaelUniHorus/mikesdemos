@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth, TruncWeek
+from django.http import HttpResponse
 from datetime import datetime, timedelta
 from .models import FinanceOperation, DocumentCategory, Document
 from .forms import FinanceOperationForm
@@ -72,6 +73,80 @@ def finance_operation_delete(request, pk):
     op.delete()
     messages.success(request, 'Операция удалена')
     return redirect('finance_operations')
+
+@login_required
+def finance_export_excel(request):
+    """Экспорт операций в Excel"""
+    import openpyxl
+    from openpyxl.styles import Font, PatternFill, Alignment
+    from openpyxl.utils import get_column_letter
+    
+    operations = FinanceOperation.objects.all()
+    
+    # Применяем фильтры
+    op_type = request.GET.get('type')
+    date_from = request.GET.get('date_from')
+    date_to = request.GET.get('date_to')
+    
+    if op_type:
+        operations = operations.filter(operation_type=op_type)
+    if date_from:
+        operations = operations.filter(date__gte=date_from)
+    if date_to:
+        operations = operations.filter(date__lte=date_to)
+    
+    # Создаем workbook
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = 'Финансовые операции'
+    
+    # Заголовки
+    headers = ['Дата', 'Название', 'Тип', 'Назначение', 'Сумма']
+    for col, header in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col)
+        cell.value = header
+        cell.font = Font(bold=True)
+        cell.fill = PatternFill(start_color='4472C4', end_color='4472C4', fill_type='solid')
+        cell.alignment = Alignment(horizontal='center')
+    
+    # Данные
+    for row, op in enumerate(operations, 2):
+        ws.cell(row=row, column=1, value=op.date.strftime('%d.%m.%Y'))
+        ws.cell(row=row, column=2, value=op.name)
+        ws.cell(row=row, column=3, value=op.get_operation_type_display())
+        ws.cell(row=row, column=4, value=op.payment_purpose)
+        ws.cell(row=row, column=5, value=float(op.amount))
+    
+    # Автоширина колонок
+    for col in ws.columns:
+        max_length = 0
+        column = col[0].column_letter
+        for cell in col:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(str(cell.value))
+            except:
+                pass
+        adjusted_width = (max_length + 2)
+        ws.column_dimensions[column].width = adjusted_width
+    
+    # Итоги
+    total_income = operations.filter(operation_type='income').aggregate(Sum('amount'))['amount__sum'] or 0
+    total_expense = operations.filter(operation_type='expense').aggregate(Sum('amount'))['amount__sum'] or 0
+    
+    summary_row = len(operations) + 3
+    ws.cell(row=summary_row, column=1, value='Итого приход:').font = Font(bold=True)
+    ws.cell(row=summary_row, column=2, value=total_income).font = Font(bold=True, color='00AA00')
+    ws.cell(row=summary_row + 1, column=1, value='Итого расход:').font = Font(bold=True)
+    ws.cell(row=summary_row + 1, column=2, value=total_expense).font = Font(bold=True, color='FF0000')
+    ws.cell(row=summary_row + 2, column=1, value='Баланс:').font = Font(bold=True)
+    ws.cell(row=summary_row + 2, column=2, value=total_income - total_expense).font = Font(bold=True)
+    
+    # Response
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename=finance_operations_{datetime.now().strftime("%Y%m%d")}.xlsx'
+    wb.save(response)
+    return response
 
 @login_required
 def finance_statistics(request):

@@ -6,6 +6,7 @@ urlpatterns = [
     path('operations/', views.finance_operations, name='finance_operations'),
     path('operations/add/', views.finance_operation_add, name='finance_operation_add'),
     path('operations/delete/<int:pk>/', views.finance_operation_delete, name='finance_operation_delete'),
+    path('operations/export/', views.finance_export_excel, name='finance_export_excel'),
     path('statistics/', views.finance_statistics, name='finance_statistics'),
     path('documents/', views.documents_index, name='documents_index'),
     path('documents/<slug:slug>/', views.documents_category, name='documents_category'),
