@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Финансы</h2>
+
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'finance_operations' %}">Операции</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'finance_statistics' %}">Статистика</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="{% url 'documents_index' %}">Документы</a>
+    </li>
+</ul>
+
+<h3>{{ title }}</h3>
+
+<form method="post" enctype="multipart/form-data" class="col-md-6">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label class="form-label">Название</label>
+        <input type="text" name="title" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Описание</label>
+        <textarea name="description" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Файл</label>
+        <input type="file" name="file" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Загрузить</button>
+    <a href="{% url 'documents_category' category.slug %}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}

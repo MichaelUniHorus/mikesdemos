@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Финансы</h2>
+
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'finance_operations' %}">Операции</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'finance_statistics' %}">Статистика</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'documents_index' %}">Документы</a>
+    </li>
+</ul>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>История операций</h3>
+    <a href="{% url 'finance_operation_add' %}" class="btn btn-primary">Добавить операцию</a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-2">
+                <select name="type" class="form-select">
+                    <option value="">Все типы</option>
+                    <option value="income" {% if filter_type == 'income' %}selected{% endif %}>Приход</option>
+                    <option value="expense" {% if filter_type == 'expense' %}selected{% endif %}>Расход</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="date_from" class="form-control" placeholder="С" value="{{ filter_date_from }}">
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="date_to" class="form-control" placeholder="По" value="{{ filter_date_to }}">
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="search" class="form-control" placeholder="Поиск..." value="{{ filter_search }}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100">Фильтр</button>
+            </div>
+            <div class="col-md-1">
+                <a href="{% url 'finance_operations' %}" class="btn btn-outline-secondary">Сброс</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5>Приход</h5>
+                <p class="display-4">{{ total_income }} ₽</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <h5>Расход</h5>
+                <p class="display-4">{{ total_expense }} ₽</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white {% if balance >= 0 %}bg-primary{% else %}bg-warning{% endif %}">
+            <div class="card-body">
+                <h5>Баланс</h5>
+                <p class="display-4">{{ balance }} ₽</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Дата</th>
+            <th>Название</th>
+            <th>Тип</th>
+            <th>Назначение</th>
+            <th>Сумма</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for op in operations %}
+        <tr>
+            <td>{{ op.date|date:"d.m.Y" }}</td>
+            <td>{{ op.name }}</td>
+            <td>
+                {% if op.operation_type == 'income' %}
+                    <span class="badge bg-success">Приход</span>
+                {% else %}
+                    <span class="badge bg-danger">Расход</span>
+                {% endif %}
+            </td>
+            <td>{{ op.payment_purpose }}</td>
+            <td>{{ op.amount }} ₽</td>
+            <td>
+                <a href="{% url 'finance_operation_delete' op.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Удалить операцию?')">Удалить</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center">Нет операций</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Финансы</h2>
+
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'finance_operations' %}">Операции</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="{% url 'finance_statistics' %}">Статистика</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'documents_index' %}">Документы</a>
+    </li>
+</ul>
+
+<h3>Статистика за {{ current_year }} год</h3>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5>Приход за год</h5>
+                <p class="display-4">{{ year_income }} ₽</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <h5>Расход за год</h5>
+                <p class="display-4">{{ year_expense }} ₽</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5>Баланс за год</h5>
+                <p class="display-4">{{ year_balance }} ₽</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>По месяцам</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Месяц</th>
+                            <th>Приход</th>
+                            <th>Расход</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in monthly_stats %}
+                        <tr>
+                            <td>{{ m.month|date:"m.Y" }}</td>
+                            <td class="text-success">{{ m.total|default:0 }} ₽</td>
+                            <td class="text-danger">-</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="text-center">Нет данных</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Расходы по назначению</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Назначение</th>
+                            <th>Сумма</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in expense_by_purpose %}
+                        <tr>
+                            <td>{{ e.payment_purpose }}</td>
+                            <td>{{ e.total }} ₽</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="2" class="text-center">Нет данных</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5>Круговая диаграмма расходов</h5>
+    </div>
+    <div class="card-body text-center">
+        <canvas id="expenseChart" width="400" height="400"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('expenseChart').getContext('2d');
+const rawData = {{ expense_by_purpose|escapejs }};
+const data = typeof rawData === 'string' ? JSON.parse(rawData) : rawData;
+if (data && data.length > 0) {
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: data.map(function(x) { return x.payment_purpose; }),
+            datasets: [{
+                data: data.map(function(x) { return x.total; }),
+                backgroundColor: [
+                    '#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff',
+                    '#ff9f40', '#ff6384', '#c9cbcf', '#4bc0c0', '#ff6384'
+                ]
+            }]
+        }
+    });
+}
+</script>
+{% endblock %}

@@ -26,6 +26,7 @@ urlpatterns = [
     path('pcmanager/', include('apps.dashboard.urls')),
     path('pcmanager/inventory/', include('apps.inventory.urls')),
     path('pcmanager/builds/', include('apps.builds.urls')),
+    path('pcmanager/finance/', include('apps.finance.urls')),
     path('pcmanager/', include('apps.accounts.urls')),
 ]
 

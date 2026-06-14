@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Финансы</h2>
+
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'finance_operations' %}">Операции</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'finance_statistics' %}">Статистика</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'documents_index' %}">Документы</a>
+    </li>
+</ul>
+
+<h3>{{ title }}</h3>
+
+<form method="post" class="col-md-6">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label class="form-label">Дата</label>
+        {{ form.date }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Название</label>
+        {{ form.name }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Тип операции</label>
+        {{ form.operation_type }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Назначение платежа</label>
+        {{ form.payment_purpose }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Сумма</label>
+        {{ form.amount }}
+    </div>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a href="{% url 'finance_operations' %}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}
