@@ -76,6 +76,8 @@ def finance_operation_delete(request, pk):
 @login_required
 def finance_statistics(request):
     """Статистика по финансам"""
+    from apps.builds.models import PCBuild
+    
     # По месяцам за текущий год
     year = datetime.now().year
     monthly_stats = FinanceOperation.objects.filter(date__year=year).annotate(
@@ -103,6 +105,20 @@ def finance_statistics(request):
         operation_type='expense'
     ).values('payment_purpose').annotate(total=Sum('amount')).order_by('-total')[:10]
     
+    # Маржинальность проданных ПК
+    sold_builds = PCBuild.objects.filter(status='sold', sold_at_timestamp__year=year)
+    profit_by_build = []
+    for build in sold_builds:
+        if build.profit:
+            profit_by_build.append({
+                'title': build.title,
+                'cost_price': build.cost_price,
+                'sale_price': build.sale_price,
+                'profit': build.profit,
+                'margin': (build.profit / build.sale_price * 100) if build.sale_price else 0,
+                'sold_at': build.sold_at_timestamp,
+            })
+    
     context = {
         'monthly_stats': list(monthly_stats),
         'weekly_stats': list(weekly_stats),
@@ -110,6 +126,7 @@ def finance_statistics(request):
         'year_expense': year_expense,
         'year_balance': year_income - year_expense,
         'expense_by_purpose': list(expense_by_purpose),
+        'profit_by_build': profit_by_build,
         'current_year': year,
     }
     return render(request, 'finance/statistics.html', context)

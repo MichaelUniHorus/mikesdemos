@@ -103,6 +103,40 @@
     </div>
 </div>
 
+<div class="card mb-4">
+    <div class="card-header">
+        <h5>Маржинальность проданных ПК</h5>
+    </div>
+    <div class="card-body">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Себестоимость</th>
+                    <th>Цена продажи</th>
+                    <th>Прибыль</th>
+                    <th>Маржа %</th>
+                    <th>Дата продажи</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in profit_by_build %}
+                <tr>
+                    <td>{{ p.title }}</td>
+                    <td>{{ p.cost_price }} ₽</td>
+                    <td>{{ p.sale_price }} ₽</td>
+                    <td class="text-success">{{ p.profit }} ₽</td>
+                    <td>{{ p.margin|floatformat:1 }}%</td>
+                    <td>{{ p.sold_at|date:"d.m.Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center">Нет проданных ПК</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-header">
         <h5>Круговая диаграмма расходов</h5>
